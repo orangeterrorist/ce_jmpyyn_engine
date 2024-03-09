@@ -1,0 +1,82 @@
+;
+; Jmpyyn64.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+CatalogFile=Jmpyyn64.cat
+DriverVer = 09/05/2023,5.18.13.78
+
+[DestinationDirs]
+DefaultDestDir = 12
+Jmpyyn64_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+Jmpyyn64.sys  = 1,,
+;
+
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%Jmpyyn64.DeviceDesc%=Jmpyyn64_Device, Root\Jmpyyn64 ; TODO: edit hw-id
+
+[Jmpyyn64_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+Jmpyyn64.sys
+
+;-------------- Service installation
+[Jmpyyn64_Device.NT.Services]
+AddService = Jmpyyn64,%SPSVCINST_ASSOCSERVICE%, Jmpyyn64_Service_Inst
+
+; -------------- Jmpyyn64 driver install sections
+[Jmpyyn64_Service_Inst]
+DisplayName    = %Jmpyyn64.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Jmpyyn64.sys
+
+;
+;--- Jmpyyn64_Device Coinstaller installation ------
+;
+
+[Jmpyyn64_Device.NT.CoInstallers]
+AddReg=Jmpyyn64_Device_CoInstaller_AddReg
+CopyFiles=Jmpyyn64_Device_CoInstaller_CopyFiles
+
+[Jmpyyn64_Device_CoInstaller_AddReg]
+;
+
+
+[Jmpyyn64_Device_CoInstaller_CopyFiles]
+;
+
+
+[Jmpyyn64_Device.NT.Wdf]
+KmdfService =  Jmpyyn64, Jmpyyn64_wdfsect
+[Jmpyyn64_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="Jmpyyn64" ;TODO: Replace with your manufacturer name
+ClassName="System" ; TODO: edit ClassName
+DiskName = "Jmpyyn64 Installation Disk"
+Jmpyyn64.DeviceDesc = "Jmpyyn64 Device"
+Jmpyyn64.SVCDESC = "Jmpyyn64 Service"
